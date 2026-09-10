@@ -34,10 +34,10 @@ Like all other projects under `slightlyuselesscreations`, everything in this rep
 
 The only human "effort" gone into this project is purely conceptual, directional and in testing only.
 
-If you consider yourself likely to be fooled that this is a "quality" project, do not. The author is an IT senior professional, but is not a programmer of any relevant skill or passion.
+If you consider yourself likely to be fooled that this is a "quality" project, do not. The author is an IT senior professional with solid grasp of modern IT concepts, but is not a programmer of any relevant skill or passion whatsoever.
 
-Our repositories are made to be as simple as possible so as to avoid leaving doors open to major problems as much as possible, and to have LLMs apply proper concepts of security. However, they are not thoroughly checked like a 'quality' project would do.
+Our repositories are made to be as simple as possible so as to avoid leaving doors open to major problems, and to have LLMs apply proper concepts of security, efficiency and cleanliness. However, they are not thoroughly checked like a fully human-made project would do.
 
-Your mileage may vary, consider yourself warned.
+Our projects are shipped as 'it works'. If you do not trust LLMs or us, DO NOT use this software. Your mileage WILL vary, consider yourself warned.
 
 Contributions to our projects are exclusively allowed when in direct collaboration with human programmers. We cannot vet how LLM contributions were generated, so they will not be accepted.
