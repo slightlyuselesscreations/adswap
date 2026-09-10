@@ -1,2 +1,29 @@
 # adswap
-Very simple browser extension that swaps in the small stream player when a Twitch AD is playing, if available.
+
+Twitch often runs an AD on a stream by reducing the stream into a little window above the chat. `adswap` mutes the AD and blows that
+small window up over the player, unmuted. When the ad ends, everything goes back.
+
+Firefox only (for now). It relies on the page's DOM, not on the Picture-in-Picture API, which Firefox
+does not expose to scripts.
+
+## What it doesn't do
+
+Regular ads have no live stream running anywhere, so there is nothing to swap in and the extension stays out of the way.
+
+It blocks nothing and proxies nothing — no network requests, no request interception, no
+data collected. The AD still loads and plays, muted, so it still counts as watched.
+
+The side feed Twitch provides is 640x360, so expect it to look soft at full size.
+
+## Install
+
+Install the signed `.xpi` in Firefox, or load it unsigned for development:
+
+`about:debugging` → This Firefox → Load Temporary Add-on → pick `manifest.json`
+
+Temporary add-ons unload when Firefox restarts.
+
+## Using it
+
+While swapped, scroll over the video to change the volume. Whatever you set carries over to
+the next ad. Play/pause and fullscreen come from Firefox's own video controls.

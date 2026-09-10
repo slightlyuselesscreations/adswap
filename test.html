@@ -1,0 +1,70 @@
+<!-- Runnable check: open in Firefox, expect three PASS lines. Fakes the real Twitch
+     structure (transformed ancestor included) with canvas streams. -->
+<body style="margin:0">
+<div class="video-player__container" style="width:640px;height:360px">
+  <video id="ad" autoplay muted style="width:100%;height:100%"></video>
+</div>
+<div style="transform:translate(-10px,0);overflow:hidden;width:200px">
+  <div id="host" class="picture-by-picture-player"><div class="pbyp-player-instance">
+    <video id="pbyp" autoplay muted style="width:200px;height:112px"></video>
+  </div></div>
+</div>
+<pre id="out">running...</pre>
+<script>
+const feed = () => {
+  const c = Object.assign(document.createElement('canvas'), { width: 64, height: 36 });
+  setInterval(() => c.getContext('2d').fillRect(0, 0, 64, 36), 100);
+  return c.captureStream(5);
+};
+const pbypFeed = feed();
+const pbypRef = pbyp;   // id-globals vanish once the element is removed from the DOM
+ad.srcObject = feed(); pbyp.srcObject = pbypFeed; ad.volume = 0.4; pbyp.volume = 0;
+// Autoplay needs the muted attribute; drop it once playing so "restore" is testable.
+ad.addEventListener('playing', () => { ad.muted = false; }, { once: true });
+</script>
+<script src="content.js"></script>
+<script>
+const log = m => out.textContent += '\n' + m;
+const check = (name, o) =>
+  log(Object.values(o).every(Boolean) ? 'PASS ' + name : `FAIL ${name} ${JSON.stringify(o)}`);
+
+setTimeout(() => {
+  check('swap', {
+    enlarged: pbyp.getBoundingClientRect().width > 600,
+    escapedTransform: pbyp.parentElement === document.body,
+    unmuted: pbyp.muted === false && pbyp.volume > 0,
+    adMuted: ad.muted === true,
+    playing: !pbyp.paused,
+    hasControls: pbyp.controls === true,
+  });
+
+  const before = pbyp.volume;
+  pbyp.dispatchEvent(new WheelEvent('wheel', { deltaY: -100, cancelable: true }));
+  const up = pbyp.volume;
+  pbyp.dispatchEvent(new WheelEvent('wheel', { deltaY: 100, cancelable: true }));
+  check('wheel volume', { raised: up > before, lowered: pbyp.volume < up });
+
+  // The bug that shipped: feed dies while the DOM stays put. Must revert anyway.
+  pbypFeed.getTracks().forEach(t => t.stop());
+  setTimeout(() => {
+    check('revert on stalled feed', {
+      overlayGone: !document.body.contains(pbypRef),
+      adUnmuted: ad.muted === false,
+      hostStillThere: document.body.contains(host),   // proves it wasn't the host check
+    });
+
+    // And the backstop: host unmounts while the feed is still alive.
+    const v = document.createElement('video');
+    v.autoplay = true; v.muted = true; v.srcObject = feed();
+    host.querySelector('.pbyp-player-instance').append(v);
+    setTimeout(() => {
+      host.remove();
+      setTimeout(() => check('revert on host removal', {
+        overlayGone: !document.body.contains(v),
+        adUnmuted: ad.muted === false,
+      }), 2000);
+    }, 2500);
+  }, 6000);
+}, 2500);
+</script>
+</body>
