@@ -25,8 +25,15 @@ Temporary add-ons unload when Firefox restarts.
 
 ## Using it
 
-While swapped, scroll over the video to change the volume. Whatever you set carries over to
-the next ad. Play/pause and fullscreen come from Firefox's own video controls.
+While swapped, scroll over the video to change the volume. Whatever you set is remembered
+for the next ad and after a reload. Play/pause and fullscreen come from Firefox's own
+video controls.
+
+A small bar in the top left says the stream is swapped, with a "Back to ad" button that
+puts the player back early. It stays back until the ad is over.
+
+The overlay follows the player, so resizing the window, scrolling, theatre mode and
+fullscreen all keep it in the right place.
 
 ## Slightly useless creations AI usage disclaimer
 

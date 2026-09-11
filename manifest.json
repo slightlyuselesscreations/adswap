@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Ad Swap",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "description": "When Twitch shows a picture-by-picture ad, mutes the ad and enlarges the small live-stream window over the player. Reverts when the ad ends.",
   "author": "wise",
   "icons": { "48": "icon.svg", "96": "icon.svg" },
@@ -12,6 +12,7 @@
       "data_collection_permissions": { "required": ["none"] }
     }
   },
+  "permissions": ["storage"],
   "content_scripts": [
     { "matches": ["https://www.twitch.tv/*"], "js": ["content.js"] }
   ]
