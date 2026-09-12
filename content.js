@@ -6,6 +6,10 @@ const PBYP_HOST = '.picture-by-picture-player';
 const MAIN = '.video-player__container video';
 const store = globalThis.browser?.storage?.local;  // absent outside the extension
 
+const log = msg => console.log('[adswap] ' + msg);
+
+log('loaded ' + (globalThis.browser?.runtime?.getManifest().version ?? 'dev'));
+
 let active = null;
 let suppressed = false;              // "Back to ad" was pressed; stay off until it ends
 let lastVolume = null;               // carried across ads, and across reloads
@@ -35,9 +39,11 @@ function place() {
   const { stream, ui, ad } = active;
   // A fullscreen element renders in the top layer and hides everything outside its
   // subtree, so the overlay has to live inside it or it simply won't be visible.
-  const root = document.fullscreenElement || document.body;
+  const fs = document.fullscreenElement;
+  if (fs === stream) return;         // the overlay itself is fullscreen; leave it be
+  const root = fs || document.body;
   if (stream.parentElement !== root) root.append(stream, ui);
-  const box = document.fullscreenElement
+  const box = fs
     ? { left: 0, top: 0, width: innerWidth, height: innerHeight }
     : ad.getBoundingClientRect();
   Object.assign(stream.style, {
@@ -49,7 +55,7 @@ function place() {
 
 function start(stream, ad) {
   active = { ad, stream, ui: makeUi(), adMuted: ad.muted, stalled: 0, at: stream.currentTime };
-  console.log('[adswap] ad detected, swapping');
+  log('ad detected, swapping');
   stream.dataset.adswap = '1';       // so a leftover can always be found and killed
   ad.muted = true;
   stream.style.cssText += ';position:fixed;z-index:9999;background:#000';
@@ -77,7 +83,7 @@ function start(stream, ad) {
 function stop(why) {
   const { ad, stream, ui, adMuted } = active;
   active = null;
-  console.log('[adswap] reverting:', why);
+  log('reverting: ' + why);
   lastVolume = stream.volume;
   store?.set({ volume: lastVolume });
   ad.muted = adMuted;
@@ -108,7 +114,7 @@ setInterval(() => {
   // Safety net: a tagged leftover while not active is a revert that never ran.
   // Without this, a dead full-size video sits over the player until you refresh.
   document.querySelectorAll('[data-adswap]').forEach(el => {
-    console.warn('[adswap] sweeping orphaned overlay');
+    log('sweeping orphaned overlay');
     el.remove();
   });
   if (suppressed) return;

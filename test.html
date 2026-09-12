@@ -28,9 +28,9 @@ ad.addEventListener('playing', () => { ad.muted = false; }, { once: true });
 <script src="content.js"></script>
 <script>
 const wait = ms => new Promise(r => setTimeout(r, ms));
-const log = m => out.textContent += '\n' + m;
+const say = m => out.textContent += '\n' + m;
 const check = (name, o) =>
-  log(Object.values(o).every(Boolean) ? 'PASS ' + name : `FAIL ${name} ${JSON.stringify(o)}`);
+  say(Object.values(o).every(Boolean) ? 'PASS ' + name : `FAIL ${name} ${JSON.stringify(o)}`);
 const ui = () => document.querySelector('div[data-adswap]');
 
 (async () => {
